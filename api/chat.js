@@ -1,16 +1,16 @@
-export default async function handler(req) {
+const openAiKey = process.env.OPENAI_API_KEY;
+const exaKey = process.env.EXA_API_KEY;
+
+module.exports = async (req, res) => {
     if (req.method !== 'POST') {
-        return new Response('Method Not Allowed', { status: 405 });
+        return res.status(405).send('Method Not Allowed');
     }
 
     try {
-        const { message } = await req.json();
-        
-        const openAiKey = process.env.OPENAI_API_KEY;
-        const exaKey = process.env.EXA_API_KEY;
+        const { message } = req.body || JSON.parse(req.body);
 
         if (!openAiKey || !exaKey) {
-            return new Response(JSON.stringify({ text: "Error: API keys are missing in Vercel settings." }), { status: 200 });
+            return res.status(200).json({ text: "Error: API keys are missing in Vercel settings." });
         }
 
         const exaResponse = await fetch('https://exa.ai', {
@@ -58,14 +58,10 @@ export default async function handler(req) {
         const openaiData = await openaiResponse.json();
         const replyText = openaiData.choices[0].message.content;
 
-        return new Response(JSON.stringify({ text: replyText }), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' }
-        });
+        return res.status(200).json({ text: replyText });
 
     } catch (error) {
-        return new Response(JSON.stringify({ text: "Sorry, SahihAgent encountered an unexpected server issue." }), { status: 200 });
+        return res.status(200).json({ text: "Sorry, SahihAgent encountered a small processing issue." });
     }
-}
-
+};
 
