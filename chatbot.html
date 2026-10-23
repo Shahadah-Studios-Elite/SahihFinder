@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SahihAgent - AI Agent</title>
+    <title>SahihAgent - AI Chatbot</title>
     <style>
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -98,7 +98,7 @@
 
     <main>
         <div id="chat-box">
-            <div style="color: #054432; margin-bottom: 10px;"><strong>SahihAgent:</strong> Assalamu Alaykum! I am connected to the internet and configured to filter for trusted Sunni Muslim sources. What would you like to verify today?</div>
+            <div style="color: #054432; margin-bottom: 10px;"><strong>SahihAgent:</strong> Assalamu Alaykum! I am now running directly in your browser. Ask me anything to verify from reliable Sunni sources.</div>
         </div>
 
         <div class="chat-input-container">
@@ -119,6 +119,9 @@
             const userInput = document.getElementById("user-input");
             const chatBox = document.getElementById("chat-box");
 
+            const openAiKey = "sk-proj-1234567890abcdefghijklmnopqrstuvwxyz"; 
+            const exaKey = "01234567-89ab-cdef-0123-456789abcdef"; 
+
             const handleSend = async () => {
                 const message = userInput.value.trim();
                 if (!message) return;
@@ -128,33 +131,62 @@
                 chatBox.scrollTop = chatBox.scrollHeight;
 
                 const loadingId = "msg-" + Date.now();
-                chatBox.innerHTML += `<div id="${loadingId}" style="margin-bottom: 10px; color: #718096; font-style: italic;">SahihAgent is searching and thinking...</div>`;
+                chatBox.innerHTML += `<div id="${loadingId}" style="margin-bottom: 10px; color: #718096; font-style: italic;">SahihAgent is searching trusted Sunni websites...</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
 
                 try {
-                    const response = await fetch('./api/chat', {
+                    const exaResponse = await fetch('https://exa.ai', {
                         method: 'POST',
-                        headers: { 
+                        headers: {
                             'Content-Type': 'application/json',
-                            'Accept': 'application/json'
+                            'x-api-key': exaKey
                         },
-                        body: JSON.stringify({ message: message })
+                        body: JSON.stringify({ 
+                            query: message, 
+                            numResults: 2,
+                            includeDomains: ["islamqa.info", "islamweb.net", "sunnah.com", "quran.com"]
+                        })
                     });
                     
-                    if (!response.ok) {
-                        throw new Error("Server status error: " + response.status);
-                    }
-                    
-                    const data = await response.json();
+                    const exaData = await exaResponse.json();
+                    const searchResults = exaData.results || [];
+                    let contextText = "";
+                    searchResults.forEach(result => {
+                        contextText += `Source: ${result.url}\nTitle: ${result.title}\n\n`;
+                    });
+
+                    const openaiResponse = await fetch('https://openai.com', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${openAiKey}`
+                        },
+                        body: JSON.stringify({
+                            model: 'gpt-4o-mini',
+                            messages: [
+                                { 
+                                    role: 'system', 
+                                    content: 'You are SahihAgent, a trustworthy Sunni Muslim AI assistant. Answer the user based on these trusted search results. Only trust mainstream sunni sources.' 
+                                },
+                                { 
+                                    role: 'user', 
+                                    content: `Search Results:\n${contextText}\n\nUser Question: ${message}` 
+                                }
+                            ]
+                        })
+                    });
+
+                    const openaiData = await openaiResponse.json();
+                    const replyText = openaiData.choices[0].message.content;
                     
                     const loadingElem = document.getElementById(loadingId);
                     if (loadingElem) loadingElem.remove();
 
-                    chatBox.innerHTML += `<div style="margin-bottom: 10px; color: #054432;"><strong>SahihAgent:</strong> ${data.text}</div>`;
+                    chatBox.innerHTML += `<div style="margin-bottom: 10px; color: #054432;"><strong>SahihAgent:</strong> ${replyText}</div>`;
                 } catch (err) {
                     const loadingElem = document.getElementById(loadingId);
                     if (loadingElem) loadingElem.remove();
-                    chatBox.innerHTML += `<div style="margin-bottom: 10px; color: red;"><strong>System Error:</strong> ${err.message}</div>`;
+                    chatBox.innerHTML += `<div style="margin-bottom: 10px; color: red;"><strong>System Error:</strong> ${err.message}. Please verify your API Keys inside the HTML file script.</div>`;
                 }
                 chatBox.scrollTop = chatBox.scrollHeight;
             };
@@ -167,4 +199,3 @@
     </script>
 </body>
 </html>
-
