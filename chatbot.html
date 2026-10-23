@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SahihAgent - AI Chatbot</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f9f6;
+            color: #2d3748;
+            text-align: center;
+        }
+        header {
+            background-color: #054432;
+            color: #ffffff;
+            padding: 30px 20px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+        header p {
+            margin: 5px 0 0 0;
+            color: #f6ad55;
+            font-size: 1rem;
+        }
+        main {
+            max-width: 650px;
+            margin: 40px auto;
+            padding: 30px 20px;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+        }
+        #chat-box {
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            height: 350px;
+            overflow-y: auto;
+            text-align: left;
+            padding: 15px;
+            background: #fafafa;
+            margin-bottom: 20px;
+        }
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        #user-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        #send-btn {
+            background: #054432;
+            color: white;
+            border: none;
+            padding: 0 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        #send-btn:hover {
+            background: #032f22;
+        }
+        .back-link {
+            color: #054432;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        footer {
+            margin-top: 60px;
+            padding: 20px 0;
+            font-size: 0.85rem;
+            color: #718096;
+            border-top: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>SahihAgent</h1>
+        <p>Live Internet Fact-Checking Assistant</p>
+    </header>
+
+    <main>
+        <div id="chat-box">
+            <div style="color: #054432; margin-bottom: 10px;"><strong>SahihAgent:</strong> Assalamu Alaykum! I am connected to the internet. What would you like to verify today?</div>
+        </div>
+
+        <div class="chat-input-container">
+            <input type="text" id="user-input" placeholder="Ask SahihAgent to look something up..." />
+            <button id="send-btn">Ask</button>
+        </div>
+
+        <a href="index.html" class="back-link">← Return to Home</a>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 SahihFinder - Shahadah Studios Elite</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const sendBtn = document.getElementById("send-btn");
+            const userInput = document.getElementById("user-input");
+            const chatBox = document.getElementById("chat-box");
+
+            const handleSend = async () => {
+                const message = userInput.value.trim();
+                if (!message) return;
+
+                chatBox.innerHTML += `<div style="margin-bottom: 10px; color: #4a5568;"><strong>You:</strong> ${message}</div>`;
+                userInput.value = "";
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                const loadingId = "msg-" + Date.now();
+                chatBox.innerHTML += `<div id="${loadingId}" style="margin-bottom: 10px; color: #718096; font-style: italic;">SahihAgent is searching and thinking...</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                try {
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message })
+                    });
+                    const data = await response.json();
+                    
+                    const loadingElem = document.getElementById(loadingId);
+                    if (loadingElem) loadingElem.remove();
+
+                    chatBox.innerHTML += `<div style="margin-bottom: 10px; color: #054432;"><strong>SahihAgent:</strong> ${data.text || data.error}</div>`;
+                } catch (err) {
+                    const loadingElem = document.getElementById(loadingId);
+                    if (loadingElem) loadingElem.remove();
+                    chatBox.innerHTML += `<div style="margin-bottom: 10px; color: red;"><strong>System Error:</strong> Network connection failed.</div>`;
+                }
+                chatBox.scrollTop = chatBox.scrollHeight;
+            };
+
+            sendBtn.addEventListener("click", handleSend);
+            userInput.addEventListener("keypress", (e) => {
+                if (e.key === 'Enter') handleSend();
+            });
+        });
+    </script>
+</body>
+</html>
