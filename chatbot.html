@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SahihAgent - AI Chatbot</title>
+    <title>SahihAgent - AI Agent</title>
     <style>
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -98,7 +98,7 @@
 
     <main>
         <div id="chat-box">
-            <div style="color: #054432; margin-bottom: 10px;"><strong>SahihAgent:</strong> Assalamu Alaykum! I am connected to the internet. What would you like to verify today?</div>
+            <div style="color: #054432; margin-bottom: 10px;"><strong>SahihAgent:</strong> Assalamu Alaykum! I am connected to the internet and configured to filter for trusted Sunni Muslim sources. What would you like to verify today?</div>
         </div>
 
         <div class="chat-input-container">
@@ -132,21 +132,29 @@
                 chatBox.scrollTop = chatBox.scrollHeight;
 
                 try {
-                    const response = await fetch('/api/chat', {
+                    const response = await fetch('./api/chat', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ message })
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ message: message })
                     });
+                    
+                    if (!response.ok) {
+                        throw new Error("Server status error: " + response.status);
+                    }
+                    
                     const data = await response.json();
                     
                     const loadingElem = document.getElementById(loadingId);
                     if (loadingElem) loadingElem.remove();
 
-                    chatBox.innerHTML += `<div style="margin-bottom: 10px; color: #054432;"><strong>SahihAgent:</strong> ${data.text || data.error}</div>`;
+                    chatBox.innerHTML += `<div style="margin-bottom: 10px; color: #054432;"><strong>SahihAgent:</strong> ${data.text}</div>`;
                 } catch (err) {
                     const loadingElem = document.getElementById(loadingId);
                     if (loadingElem) loadingElem.remove();
-                    chatBox.innerHTML += `<div style="margin-bottom: 10px; color: red;"><strong>System Error:</strong> Network connection failed.</div>`;
+                    chatBox.innerHTML += `<div style="margin-bottom: 10px; color: red;"><strong>System Error:</strong> ${err.message}</div>`;
                 }
                 chatBox.scrollTop = chatBox.scrollHeight;
             };
@@ -159,3 +167,4 @@
     </script>
 </body>
 </html>
+
