@@ -3,20 +3,23 @@ const exaKey = process.env.EXA_API_KEY;
 
 module.exports = async (req, res) => {
     if (req.method !== 'POST') {
-        return res.status(405).send('Method Not Allowed');
+        res.setHeader('Allow', ['POST']);
+        return res.status(405).end('Method Not Allowed');
     }
 
     try {
-        let message = "";
-        
-        if (req.body && typeof req.body === 'object' && req.body.message) {
-            message = req.body.message;
-        } else if (req.body && typeof req.body === 'string') {
+        let bodyBuffer = '';
+        for await (const chunk of req) {
+            bodyBuffer += chunk;
+        }
+
+        let message = '';
+        if (bodyBuffer) {
             try {
-                const parsed = JSON.parse(req.body);
+                const parsed = JSON.parse(bodyBuffer);
                 message = parsed.message;
-            } catch(e) {
-                message = req.body;
+            } catch (e) {
+                message = bodyBuffer;
             }
         }
 
@@ -77,12 +80,13 @@ module.exports = async (req, res) => {
         if (openaiData.choices && openaiData.choices[0] && openaiData.choices[0].message) {
             return res.status(200).json({ text: openaiData.choices[0].message.content });
         } else if (openaiData.error) {
-            return res.status(200).json({ text: `OpenAI Error: ${openaiData.error.message}` });
+            return res.status(200).json({ text: `OpenAI API Error: ${openaiData.error.message}` });
         }
 
-        return res.status(200).json({ text: "SahihAgent could not build a clear response." });
+        return res.status(200).json({ text: "SahihAgent could not compile a clean response response." });
 
     } catch (error) {
-        return res.status(200).json({ text: `System Error: ${error.message}` });
+        return res.status(200).json({ text: `Server Execution Error: ${error.message}` });
     }
 };
+
