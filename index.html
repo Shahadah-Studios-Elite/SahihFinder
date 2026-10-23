@@ -28,19 +28,6 @@
             color: #f6ad55;
             font-size: 1.1rem;
         }
-        nav {
-            background-color: #032f22;
-            padding: 12px 0;
-        }
-        nav a {
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 1rem;
-        }
-        nav a:hover {
-            color: #f6ad55;
-        }
         main {
             max-width: 650px;
             margin: 50px auto;
@@ -85,26 +72,25 @@
 </head>
 <body>
 
-    <header>
-        <h1>SahihFinder</h1>
-        <p>A website for Muslims to verify the truth from the internet</p>
-    </header>
+    <div id="app"></div>
 
-    <nav>
-        <a href="Wiki.html">WIKI</a>
-    </nav>
-
-    <main>
-        <h2>Welcome to SahihFinder</h2>
-        <p>A dedicated platform built to help clarify and verify information online in accordance with Islamic values.</p>
+    <script type="module">
+        import { transform } from 'https://esm.sh';
         
-        <a href="Wiki.html" class="wiki-button">Explore The WIKI<br>Coming Soon!</a>
-    </main>
-
-    <footer>
-        <p>&copy; 2026 SahihFinder - Shahadah Studios Elite</p>
-    </footer>
-
+        async function loadTS() {
+            const response = await fetch('./index.ts');
+            const tsCode = await response.text();
+            const result = await transform(tsCode, { loader: 'ts' });
+            
+            const script = document.createElement('script');
+            script.type = 'module';
+            script.textContent = result.code;
+            document.body.appendChild(script);
+        }
+        
+        loadTS().catch(err => console.error("Error loading index.ts:", err));
+    </script>
 </body>
 </html>
+
 
