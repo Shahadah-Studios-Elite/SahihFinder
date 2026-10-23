@@ -32,3 +32,4 @@ document.addEventListener("DOMContentLoaded", () => {
     const app = new SahihFinderApp();
     app.render();
 });
+
