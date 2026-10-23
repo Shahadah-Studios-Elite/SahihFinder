@@ -2,10 +2,6 @@ import { generateText, tool } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 
-export const config = {
-    runtime: 'edge',
-};
-
 export default async function handler(req) {
     if (req.method !== 'POST') {
         return new Response('Method Not Allowed', { status: 405 });
@@ -58,6 +54,7 @@ export default async function handler(req) {
             headers: { 'Content-Type': 'application/json' }
         });
     } catch (error) {
-        return new Response(JSON.stringify({ error: "Something went wrong" }), { status: 500 });
+        return new Response(JSON.stringify({ error: "Something went wrong internally." }), { status: 500 });
     }
 }
+
