@@ -1,34 +1,16 @@
 const openAiKey = process.env.OPENAI_API_KEY;
 const exaKey = process.env.EXA_API_KEY;
 
-export default async function handler(req, res) {
-    if (req.method !== 'POST') {
-        return res.status(405).json({ text: "Method Not Allowed" });
-    }
-
+export async function POST(request) {
     try {
-        let message = "";
-        
-        if (req.body && req.body.message) {
-            message = req.body.message;
-        } else {
-            const chunks = [];
-            for await (const chunk of req) {
-                chunks.push(chunk);
-            }
-            const buffer = Buffer.concat(chunks).toString();
-            if (buffer) {
-                const parsed = JSON.parse(buffer);
-                message = parsed.message;
-            }
-        }
+        const { message } = await request.json();
 
         if (!message) {
-            return res.status(200).json({ text: "Please type a question for SahihAgent." });
+            return Response.json({ text: "Please type a question for SahihAgent." }, { status: 200 });
         }
 
         if (!openAiKey || !exaKey) {
-            return res.status(200).json({ text: "Error: API keys are missing in Vercel settings." });
+            return Response.json({ text: "Error: API keys are missing in Vercel settings." }, { status: 200 });
         }
 
         let contextText = "";
@@ -78,12 +60,13 @@ export default async function handler(req, res) {
         const openaiData = await openaiResponse.json();
         
         if (openaiData.choices && openaiData.choices[0] && openaiData.choices[0].message) {
-            return res.status(200).json({ text: openaiData.choices[0].message.content });
+            return Response.json({ text: openaiData.choices[0].message.content }, { status: 200 });
         }
 
-        return res.status(200).json({ text: "SahihAgent could not compile a clean response." });
+        return Response.json({ text: "SahihAgent could not compile a clean response." }, { status: 200 });
 
     } catch (error) {
-        return res.status(200).json({ text: `System Error: ${error.message}` });
+        return Response.json({ text: `System Error: ${error.message}` }, { status: 200 });
     }
 }
+
