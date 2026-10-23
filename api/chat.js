@@ -1,7 +1,3 @@
-import { generateText, tool } from 'ai';
-import { openai } from '@ai-sdk/openai';
-import { z } from 'zod';
-
 export default async function handler(req) {
     if (req.method !== 'POST') {
         return new Response('Method Not Allowed', { status: 405 });
@@ -9,52 +5,67 @@ export default async function handler(req) {
 
     try {
         const { message } = await req.json();
+        
+        const openAiKey = process.env.OPENAI_API_KEY;
+        const exaKey = process.env.EXA_API_KEY;
 
-        const response = await generateText({
-            model: openai('gpt-4o-mini'),
-            system: "You are SahihAgent, a trustworthy Sunni Muslim AI assistant. Your goal is to help users verify information using the internet. You MUST strictly filter your information and rely ONLY on reliable, mainstream Sunni Islamic websites. Do not use or reference non-Sunni or unreliable blogs.",
-            prompt: message,
-            tools: {
-                searchTheWeb: tool({
-                    description: 'Search the live internet for Islamic proof and truth.',
-                    inputSchema: z.object({
-                        query: z.string().description('The search query'),
-                    }),
-                    execute: async ({ query }) => {
-                        const apiKey = process.env.EXA_API_KEY;
-                        if (!apiKey) return { error: "Search token is missing." };
+        if (!openAiKey || !exaKey) {
+            return new Response(JSON.stringify({ text: "Error: API keys are missing in Vercel settings." }), { status: 200 });
+        }
 
-                        const res = await fetch('https://exa.ai', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'x-api-key': apiKey
-                            },
-                            body: JSON.stringify({ 
-                                query: query, 
-                                numResults: 3,
-                                includeDomains: [
-                                    "islamqa.info",
-                                    "islamweb.net",
-                                    "sunnah.com",
-                                    "quran.com"
-                                ]
-                            })
-                        });
-                        const data = await res.json();
-                        return { results: data.results || [] };
-                    }
-                })
+        const exaResponse = await fetch('https://exa.ai', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': exaKey
             },
-            maxSteps: 3
+            body: JSON.stringify({ 
+                query: message, 
+                numResults: 3,
+                includeDomains: ["islamqa.info", "islamweb.net", "sunnah.com", "quran.com"]
+            })
+        });
+        
+        const exaData = await exaResponse.json();
+        const searchResults = exaData.results || [];
+        
+        let contextText = "";
+        searchResults.forEach(result => {
+            contextText += `Source: ${result.url}\nTitle: ${result.title}\n\n`;
         });
 
-        return new Response(JSON.stringify({ text: response.text }), {
+        const openaiResponse = await fetch('https://openai.com', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${openAiKey}`
+            },
+            body: JSON.stringify({
+                model: 'gpt-4o-mini',
+                messages: [
+                    { 
+                        role: 'system', 
+                        content: 'You are SahihAgent, a trustworthy Sunni Muslim AI assistant. Answer the user based on these trusted search results. Only trust the provided sunni sources.' 
+                    },
+                    { 
+                        role: 'user', 
+                        content: `Search Results:\n${contextText}\n\nUser Question: ${message}` 
+                    }
+                ]
+            })
+        });
+
+        const openaiData = await openaiResponse.json();
+        const replyText = openaiData.choices[0].message.content;
+
+        return new Response(JSON.stringify({ text: replyText }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
         });
+
     } catch (error) {
-        return new Response(JSON.stringify({ error: "Something went wrong internally." }), { status: 500 });
+        return new Response(JSON.stringify({ text: "Sorry, SahihAgent encountered an unexpected server issue." }), { status: 200 });
     }
 }
+
 
