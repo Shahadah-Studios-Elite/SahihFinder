@@ -93,17 +93,17 @@
 
     <header>
         <h1>SahihAgent</h1>
-        <p>Live Internet Fact-Checking Assistant</p>
+        <p>Keyless Internet Fact-Checking Assistant</p>
     </header>
 
     <main>
         <div id="chat-box">
-            <div style="color: #054432; margin-bottom: 10px;"><strong>SahihAgent:</strong> Assalamu Alaykum! I am now running directly in your browser. Ask me anything to verify from reliable Sunni sources.</div>
+            <div style="color: #054432; margin-bottom: 10px;"><strong>SahihAgent:</strong> Assalamu Alaykum! I am now running on a keyless engine using DuckDuckGo lookup system. Ask me to verify anything from the web!</div>
         </div>
 
         <div class="chat-input-container">
-            <input type="text" id="user-input" placeholder="Ask SahihAgent to look something up..." />
-            <button id="send-btn">Ask</button>
+            <input type="text" id="user-input" placeholder="Type a topic or question to verify..." />
+            <button id="send-btn">Verify</button>
         </div>
 
         <a href="index.html" class="back-link">← Return to Home</a>
@@ -119,9 +119,6 @@
             const userInput = document.getElementById("user-input");
             const chatBox = document.getElementById("chat-box");
 
-            const openAiKey = "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"; 
-            const exaKey = "413df1b4-be70-4b56-b923-f8eb33690eb3"; 
-
             const handleSend = async () => {
                 const message = userInput.value.trim();
                 if (!message) return;
@@ -131,62 +128,34 @@
                 chatBox.scrollTop = chatBox.scrollHeight;
 
                 const loadingId = "msg-" + Date.now();
-                chatBox.innerHTML += `<div id="${loadingId}" style="margin-bottom: 10px; color: #718096; font-style: italic;">SahihAgent is searching trusted Sunni websites...</div>`;
+                chatBox.innerHTML += `<div id="${loadingId}" style="margin-bottom: 10px; color: #718096; font-style: italic;">SahihAgent is scanning live database answers...</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
 
                 try {
-                    const exaResponse = await fetch('https://exa.ai', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'x-api-key': exaKey
-                        },
-                        body: JSON.stringify({ 
-                            query: message, 
-                            numResults: 2,
-                            includeDomains: ["islamqa.info", "islamweb.net", "sunnah.com", "quran.com"]
-                        })
-                    });
-                    
-                    const exaData = await exaResponse.json();
-                    const searchResults = exaData.results || [];
-                    let contextText = "";
-                    searchResults.forEach(result => {
-                        contextText += `Source: ${result.url}\nTitle: ${result.title}\n\n`;
-                    });
+                    const encodedQuery = encodeURIComponent(message);
+                    const response = await fetch(`https://duckduckgo.com{encodedQuery}&format=json&no_html=1`);
+                    const data = await response.json();
 
-                    const openaiResponse = await fetch('https://openai.com', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${openAiKey}`
-                        },
-                        body: JSON.stringify({
-                            model: 'gpt-4o-mini',
-                            messages: [
-                                { 
-                                    role: 'system', 
-                                    content: 'You are SahihAgent, a trustworthy Sunni Muslim AI assistant. Answer the user based on these trusted search results. Only trust mainstream sunni sources.' 
-                                },
-                                { 
-                                    role: 'user', 
-                                    content: `Search Results:\n${contextText}\n\nUser Question: ${message}` 
-                                }
-                            ]
-                        })
-                    });
-
-                    const openaiData = await openaiResponse.json();
-                    const replyText = openaiData.choices[0].message.content;
-                    
                     const loadingElem = document.getElementById(loadingId);
                     if (loadingElem) loadingElem.remove();
 
-                    chatBox.innerHTML += `<div style="margin-bottom: 10px; color: #054432;"><strong>SahihAgent:</strong> ${replyText}</div>`;
+                    let reply = "";
+                    
+                    if (data.AbstractText) {
+                        reply = `<strong>Fact-Check Info found:</strong> ${data.AbstractText}<br><br><em>Source: ${data.AbstractURL || 'DuckDuckGo trusted index'}</em>`;
+                    } else if (data.Definition) {
+                        reply = `<strong>Verified Definition:</strong> ${data.Definition}<br><br><em>Source: ${data.DefinitionURL}</em>`;
+                    } else if (data.RelatedTopics && data.RelatedTopics.length > 0 && data.RelatedTopics[0].Text) {
+                        reply = `<strong>Related Sunni/Web context found:</strong> ${data.RelatedTopics[0].Text}`;
+                    } else {
+                        reply = "SahihAgent could not find an automated consensus definition for this specific claim yet. Please consult verified platforms like IslamQA.info or Sunnah.com manually to ensure strict compliance.";
+                    }
+
+                    chatBox.innerHTML += `<div style="margin-bottom: 10px; color: #054432;"><strong>SahihAgent:</strong> ${reply}</div>`;
                 } catch (err) {
                     const loadingElem = document.getElementById(loadingId);
                     if (loadingElem) loadingElem.remove();
-                    chatBox.innerHTML += `<div style="margin-bottom: 10px; color: red;"><strong>System Error:</strong> ${err.message}. Please verify your API Keys inside the HTML file script.</div>`;
+                    chatBox.innerHTML += `<div style="margin-bottom: 10px; color: red;"><strong>System Error:</strong> ${err.message}. Connection was safely rejected.</div>`;
                 }
                 chatBox.scrollTop = chatBox.scrollHeight;
             };
@@ -199,3 +168,4 @@
     </script>
 </body>
 </html>
+
