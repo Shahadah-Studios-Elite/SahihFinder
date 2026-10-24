@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="/favicon1.png?v=6">
-    <title>SahihFinder | Wiki</title>
+    <title>SahihFinder - Wiki</title>
     <style>
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -137,14 +136,22 @@
 
     <main>
         <div class="tabs-container">
-            <button class="tab-button active" onclick="switchTab('all')">All</button>
+            <button class="tab-button active" onclick="switchTab('all')">ALL</button>
             <button class="tab-button" onclick="switchTab('madhab')">Madhab</button>
         </div>
 
         <div class="wiki-content-box">
             <h2 id="section-title">General</h2>
             <div id="section-content">
-                <p>We're Researching to get the best for you! Please check back SOON!</p>
+                
+                <details style="text-align: left; margin: 0 auto; max-width: 450px; cursor: pointer;">
+                    <summary style="font-weight: bold; color: #054432;">Verified resources</summary>
+                    <ul style="line-height: 1.8; padding-left: 20px; margin-top: 10px;">
+                        <li><a href="https://sunnah.com" target="_blank" style="color: #c28100; text-decoration: none; font-weight: 500;">Sunnah.com</a><br>A website where verified <br>Sahih Hadiths are listed.</li>
+                        <li><a href="https://islamqa.info" target="_blank" style="color: #c28100; text-decoration: none; font-weight: 500;">IslamQA.info</a><br>A website where verified Islamic Shaikhs answer <br>your questions related to Deen and all <br>answers are verified.</li>
+                        <li><a href="https://quran.com" target="_blank" style="color: #c28100; text-decoration: none; font-weight: 500;">Quran.com</a><br>A Quran website which has a Quran app-store <br>and many other Islamic items.</li>
+                    </ul>
+                </details>
             </div>
         </div>
 
@@ -163,12 +170,27 @@
             madhab: "Madhab Section"
         };
 
-        
-
-                const contents = {
-           // here to write HTML we may need `` to run it.
-                    all: "We're Researching to get the get the best for you! Please check back SOON!",
-            madhab: "We're researching the best on the Madhab topic for you! Please check back Soon!"
+        const contents = {
+            all: `
+                
+                <details style="text-align: left; margin: 0 auto; max-width: 450px; cursor: pointer;">
+                    <summary style="font-weight: bold; color: #054432;">Verified resources</summary>
+                    <ul style="line-height: 1.8; padding-left: 20px; margin-top: 10px;">
+                        <li><a href="https://sunnah.com" target="_blank" style="color: #c28100; text-decoration: none; font-weight: 500;">Sunnah.com</a><br>A website where verified <br>Sahih Hadiths are listed.</li>
+                        <li><a href="https://islamqa.info" target="_blank" style="color: #c28100; text-decoration: none; font-weight: 500;">IslamQA.info</a><br>A website where verified Islamic Shaikhs answer <br>your questions related to Deen and all <br>answers are verified.</li>
+                        <li><a href="https://quran.com" target="_blank" style="color: #c28100; text-decoration: none; font-weight: 500;">Quran.com</a><br>A Quran website which has a Quran app-store <br>and many other Islamic items.</li>
+                    </ul>
+                </details>
+            `,
+            madhab: `
+                <p style="color: #054432; font-weight: bold; margin-bottom: 15px;">Explore your Madhab!</p>
+                <ul style="text-align: left; margin: 0 auto; max-width: 450px; line-height: 1.8; padding-left: 20px;">
+                    <li><strong style="color: #c28100;">Hanafi</strong></li>
+                    <li><strong style="color: #c28100;">Maliki</strong></li>
+                    <li><strong style="color: #c28100;">Shafi'i</strong></li>
+                    <li><strong style="color: #c28100;">Hanbali</strong></li>
+                </ul>
+            `
         };
 
         function switchTab(key) {
