@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SahihFinder - System Status</title>
+    <title>SahihFinder - Text Checker</title>
     <style>
         :root {
             --bg-color: #f8fafc;
@@ -82,32 +83,65 @@
         }
         main {
             flex: 1;
-            max-width: 600px;
+            max-width: 650px;
             width: 100%;
-            margin: 60px auto;
+            margin: 40px auto;
             padding: 0 20px;
             box-sizing: border-box;
         }
-        .status-card {
+        .checker-card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 40px;
+            padding: 35px 25px;
             box-shadow: var(--shadow);
         }
-        .status-card h2 {
+        .checker-card h2 {
             color: var(--accent-color);
             margin-top: 0;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
+            margin-bottom: 20px;
         }
-        .status-value {
-            font-size: 2.5rem;
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--box-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            box-sizing: border-box;
+            resize: none;
+            outline: none;
+        }
+        button.check-btn {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            border: 1px solid var(--primary-color);
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+        }
+        button.check-btn:hover {
+            opacity: 0.9;
+        }
+        .result-box {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: var(--box-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            text-align: left;
+            display: none;
+        }
+        .result-title {
             font-weight: 700;
-            color: var(--primary-color);
-            margin: 20px 0;
-        }
-        [data-theme="dark"] .status-value {
-            color: var(--accent-color);
+            margin-bottom: 8px;
         }
         footer {
             padding: 25px 20px;
@@ -132,14 +166,20 @@
     </header>
 
     <nav>
-        <a href="index.html">Home</a>
+        <a href="/">Home</a>
     </nav>
 
     <main>
-        <div class="status-card">
-            <h2>Backend Server Time</h2>
-            <p>This tracking metrics data is pulled live from a fast compiled Go function runtime running on Vercel:</p>
-            <div class="status-value" id="go-data">Loading...</div>
+        <div class="checker-card">
+            <h2>Instant Text Scanner</h2>
+            <p>Paste an Islamic claim, news quote, or narration text below to run a fast safety check via Go engine processing:</p>
+            <textarea id="text-input" placeholder="Enter text here..."></textarea>
+            <button class="check-btn" onclick="runCheck()">Scan Text</button>
+            
+            <div class="result-box" id="result-container">
+                <div class="result-title" id="result-status"></div>
+                <p id="result-text" style="margin: 0;"></p>
+            </div>
         </div>
     </main>
 
@@ -160,17 +200,34 @@
             }
         }
 
-        async function loadGoStats() {
+        async function runCheck() {
+            const text = document.getElementById('text-input').value.trim();
+            const container = document.getElementById('result-container');
+            const statusElem = document.getElementById('result-status');
+            const textElem = document.getElementById('result-text');
+
+            if (!text) return;
+
             try {
-                const response = await fetch('/api/stats');
+                const response = await fetch('/api/check', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text })
+                });
                 const data = await response.json();
-                document.getElementById('go-data').textContent = data.year;
+                
+                statusElem.textContent = "Status: " + data.status;
+                statusElem.style.color = data.status === "Flagged" ? "#ef4444" : "#10b981";
+                textElem.textContent = data.message;
+                container.style.display = 'block';
             } catch (err) {
-                document.getElementById('go-data').textContent = "Offline";
+                statusElem.textContent = "Error";
+                statusElem.style.color = "#ef4444";
+                textElem.textContent = "Could not connect to Go backend.";
+                container.style.display = 'block';
             }
         }
-
-        DOMContentLoaded = loadGoStats();
     </script>
 </body>
 </html>
+
