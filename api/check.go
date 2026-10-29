@@ -16,7 +16,7 @@ type ResponseData struct {
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-	if r.method != "POST" {
+	if r.Method != "POST" {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
@@ -49,4 +49,3 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(res)
 }
-
