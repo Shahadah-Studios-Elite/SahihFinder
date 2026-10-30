@@ -29,15 +29,32 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	input := strings.ToLower(req.Text)
-	status := "Verified Format"
-	message := "This text does not trigger automated safety flags. Remember to always cross-check chains of narrators on Sunnah.com."
+	
+	status := "Needs Manual Check"
+	message := "This text cannot be automatically verified. Please cross-check this information manually on Sunnah.com or ask a trusted local scholar."
 
-	if strings.Contains(input, "prophet said") && !strings.Contains(input, "sahih") && !strings.Contains(input, "bukhari") && !strings.Contains(input, "muslim") {
+	hasTrustedSource := strings.Contains(input, "bukhari") || 
+		strings.Contains(input, "muslim") || 
+		strings.Contains(input, "tirmidhi") || 
+		strings.Contains(input, "abu dawud") || 
+		strings.Contains(input, "nasa'i") || 
+		strings.Contains(input, "ibn majah")
+
+	containsAuthorityWord := strings.Contains(input, "said") || 
+		strings.Contains(input, "prophet") || 
+		strings.Contains(input, "told")
+
+	if strings.Contains(input, "forward this") || 
+		strings.Contains(input, "share to") || 
+		strings.Contains(input, "10 people") {
 		status = "Flagged"
-		message = "Warning: This text claims to be a saying of the Prophet but does not reference a verified collection (like Bukhari or Muslim). Please verify this source carefully."
-	} else if strings.Contains(input, "forward this") || strings.Contains(input, "share to 10 people") {
+		message = "Warning: Chain-letter formatting detected. This resembles known internet rumors. Do not spread without strict verification."
+	} else if containsAuthorityWord && !hasTrustedSource {
 		status = "Flagged"
-		message = "Warning: Chain-letter text detected (e.g., 'share to 10 people'). These are usually false or constructed internet rumors. Do not spread without strict verification."
+		message = "Warning: An unverified transmission or command statement was detected without referencing a reliable collection (like Bukhari or Muslim). Please check this claim carefully."
+	} else if hasTrustedSource {
+		status = "Source Referenced"
+		message = "A classical Sunni Hadith collection is referenced in the text. Make sure to double-check the specific chapter and volume number to confirm accuracy."
 	}
 
 	res := ResponseData{
@@ -49,3 +66,4 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(res)
 }
+
