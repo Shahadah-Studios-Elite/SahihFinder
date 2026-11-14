@@ -162,26 +162,37 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
+	fastEditions := []struct {
+		Label  string
+		Slug   string
+		APIURL string
+	}{
+		{"40 Hadith Nawawi", "nawawi40", "https://jsdelivr.net"},
+		{"40 Hadith Qudsi", "qudsi40", "https://jsdelivr.net"},
+	}
+
 	client := &http.Client{Timeout: 3 * time.Second}
-	resp, err := client.Get("https://jsdelivr.net")
-	if err == nil && resp.StatusCode == 200 {
-		var nawawiData HadithAPIResponse
-		if err := json.NewDecoder(resp.Body).Decode(&nawawiData); err == nil {
-			for _, h := range nawawiData.Hadiths {
-				if h.Text != "" {
-					snippet := h.Text
-					if len(snippet) > 320 {
-						snippet = snippet[:320] + "..."
+	for _, ed := range fastEditions {
+		resp, err := client.Get(ed.APIURL)
+		if err == nil && resp.StatusCode == 200 {
+			var edData HadithAPIResponse
+			if err := json.NewDecoder(resp.Body).Decode(&edData); err == nil {
+				for _, h := range edData.Hadiths {
+					if h.Text != "" {
+						snippet := h.Text
+						if len(snippet) > 350 {
+							snippet = snippet[:350] + "..."
+						}
+						database = append(database, HadithMatch{
+							Title:   fmt.Sprintf("%s #%d", ed.Label, h.HadithNumber),
+							Snippet: snippet,
+							URL:     fmt.Sprintf("https://sunnah.com", ed.Slug, h.HadithNumber),
+						})
 					}
-					database = append(database, HadithMatch{
-						Title:   fmt.Sprintf("40 Hadith Nawawi #%d", h.HadithNumber),
-						Snippet: snippet,
-						URL:     fmt.Sprintf("https://sunnah.com", h.HadithNumber),
-					})
 				}
 			}
+			resp.Body.Close()
 		}
-		resp.Body.Close()
 	}
 
 	var matches []HadithMatch
@@ -213,14 +224,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	limit := 2
-	if len(matches) < limit {
-		limit = len(matches)
-	}
-
-	topResults := matches[:limit]
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(SearchResponse{Results: topResults})
+	json.NewEncoder(w).Encode(SearchResponse{Results: matches})
 }
