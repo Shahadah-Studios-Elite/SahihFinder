@@ -26,7 +26,7 @@
     <main>
         <div class="search-card">
             <h2>Hadith Matcher</h2>
-            <p class="desc">Enter keywords or a phrase to search authentic Nawawi & Qudsi collections with direct Sunnah.com verification links.</p>
+            <p class="desc">Enter keywords or a phrase to search authentic collections with direct Sunnah.com verification links.</p>
             
             <div class="input-group">
                 <input type="text" id="query-input" placeholder="Example: actions are by intentions" onkeypress="if(event.key==='Enter') searchHadith()" />
@@ -41,133 +41,6 @@
         <p>&copy; 2026 SahihFinder - Shahadah Studios Elite</p>
     </footer>
 
-    <script>
-        let cachedHadiths = [];
-
-        function toggleTheme() {
-            const body = document.body;
-            const icon = document.getElementById('theme-icon');
-            if (body.getAttribute('data-theme') === 'dark') {
-                body.removeAttribute('data-theme');
-                icon.innerHTML = '<path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>';
-            } else {
-                body.setAttribute('data-theme', 'dark');
-                icon.innerHTML = '<path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.42l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.42L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.42l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.42l-1.06-1.06zm1.06-12.37c-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.42s1.03.39 1.41 0l1.06-1.06c.39-.38.39-1.02 0-1.42zM5.99 16.95l-1.06 1.06c-.39.39-.39 1.03 0 1.42s1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.42z"/>';
-            }
-        }
-
-        async function loadCollections() {
-            if (cachedHadiths.length > 0) return cachedHadiths;
-
-            const sources = [
-                { label: '40 Hadith Nawawi', slug: 'nawawi40', url: 'https://jsdelivr.net' },
-                { label: '40 Hadith Qudsi', slug: 'qudsi40', url: 'https://jsdelivr.net' }
-            ];
-
-            for (const src of sources) {
-                try {
-                    const res = await fetch(src.url);
-                    if (!res.ok) continue;
-                    const data = await res.json();
-                    if (data.hadiths) {
-                        data.hadiths.forEach(h => {
-                            if (h.text) {
-                                cachedHadiths.push({
-                                    title: src.label + ' #' + h.hadithnumber,
-                                    text: h.text,
-                                    url: 'https://sunnah.com' + src.slug + ':' + h.hadithnumber
-                                });
-                            }
-                        });
-                    }
-                } catch (e) {}
-            }
-            return cachedHadiths;
-        }
-
-        async function searchHadith() {
-            const rawQuery = document.getElementById('query-input').value.trim();
-            const container = document.getElementById('results-container');
-            if (!rawQuery) return;
-
-            container.innerHTML = '<p style="text-align:center; opacity:0.8;">Searching authentic collections...</p>';
-
-            const database = await loadCollections();
-            const lowerQuery = rawQuery.toLowerCase();
-            const stopWords = new Set(['the', 'and', 'for', 'that', 'this', 'with', 'you', 'are', 'from', 'have', 'hadith', 'about', 'what', 'said', 'prophet']);
-
-            let keywords = lowerQuery.split(/\s+/)
-                .map(w => w.replace(/[.,!?"'():;]/g, ''))
-                .filter(w => w.length > 2 && !stopWords.has(w));
-
-            if (keywords.length === 0) {
-                keywords = lowerQuery.split(/\s+/)
-                    .map(w => w.replace(/[.,!?"'():;]/g, ''))
-                    .filter(w => w.length > 1);
-            }
-
-            const matches = [];
-            for (const item of database) {
-                const searchable = (item.title + ' ' + item.text).toLowerCase();
-                let score = 0;
-
-                if (searchable.includes(lowerQuery)) score += 10;
-                for (const kw of keywords) {
-                    if (searchable.includes(kw)) score += 2;
-                }
-
-                if (score > 0) {
-                    matches.push({ ...item, score });
-                }
-            }
-
-            matches.sort((a, b) => b.score - a.score);
-            container.innerHTML = '';
-
-            if (matches.length === 0) {
-                const fallbackDiv = document.createElement('div');
-                fallbackDiv.className = 'hadith-item';
-
-                const p = document.createElement('p');
-                p.className = 'hadith-text';
-                p.textContent = 'No matches found in the Nawawi & Qudsi collections. Click below to search the full Sunnah.com archive:';
-
-                const a = document.createElement('a');
-                a.className = 'sunnah-link';
-                a.href = 'https://sunnah.comsearch?q=' + encodeURIComponent(rawQuery);
-                a.target = '_blank';
-                a.textContent = 'Search "' + rawQuery + '" on Sunnah.com ->';
-
-                fallbackDiv.appendChild(p);
-                fallbackDiv.appendChild(a);
-                container.appendChild(fallbackDiv);
-                return;
-            }
-
-            matches.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'hadith-item';
-
-                const header = document.createElement('div');
-                header.className = 'hadith-header';
-                header.textContent = item.title;
-
-                const text = document.createElement('p');
-                text.className = 'hadith-text';
-                text.textContent = item.text.length > 380 ? item.text.slice(0, 380) + '...' : item.text;
-
-                const link = document.createElement('a');
-                link.className = 'sunnah-link';
-                link.href = item.url;
-                link.target = '_blank';
-                link.textContent = 'Verify on Sunnah.com ->';
-
-                card.appendChild(header);
-                card.appendChild(text);
-                card.appendChild(link);
-                container.appendChild(card);
-            });
-        }
-    </script>
+    <script src="searcher.js"></script>
 </body>
 </html>
