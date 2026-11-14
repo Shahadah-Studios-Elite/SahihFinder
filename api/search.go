@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type SearchRequest struct {
@@ -61,9 +62,12 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var allMatches []HadithMatch
-	client := &http.Client{}
+	client := &http.Client{Timeout: 5 * time.Second}
 
 	for _, col := range collections {
+		if len(allMatches) >= 10 {
+			break
+		}
 		resp, err := client.Get(col.APIURL)
 		if err != nil {
 			continue
@@ -117,3 +121,4 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(SearchResponse{Results: topResults})
 }
+
