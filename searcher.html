@@ -26,7 +26,7 @@
     <main>
         <div class="search-card">
             <h2>Hadith Matcher</h2>
-            <p class="desc">Enter keywords or a phrase to pull the 2 closest matching Hadiths from Bukhari & Muslim with direct Sunnah.com verification links.</p>
+            <p class="desc">Enter keywords or a phrase to pull the 2 closest matching Hadiths directly from Sunnah.com.</p>
             
             <div class="input-group">
                 <input type="text" id="query-input" placeholder="Example: actions are by intentions" onkeypress="if(event.key==='Enter') searchHadith()" />
@@ -59,7 +59,7 @@
             const container = document.getElementById('results-container');
             if (!query) return;
 
-            container.innerHTML = '<p style="text-align:center; opacity:0.8;">Scanning Sahih collections...</p>';
+            container.innerHTML = '<p style="text-align:center; opacity:0.8;">Searching Sunnah.com...</p>';
 
             try {
                 const response = await fetch('/api/search', {
@@ -69,25 +69,53 @@
                 });
                 const data = await response.json();
 
+                container.innerHTML = '';
+
                 if (!data.results || data.results.length === 0) {
-                    container.innerHTML = `<div class="hadith-item"><p class="hadith-text">No exact matches found in the quick index. Try simpler keywords or search directly on Sunnah.com.</p><a class="sunnah-link" href="https://sunnah.com{encodeURIComponent(query)}" target="_blank">Search "${query}" on Sunnah.com &rarr;</a></div>`;
+                    const fallbackDiv = document.createElement('div');
+                    fallbackDiv.className = 'hadith-item';
+
+                    const p = document.createElement('p');
+                    p.className = 'hadith-text';
+                    p.textContent = 'No instant preview loaded. Click below to view direct results on Sunnah.com:';
+
+                    const a = document.createElement('a');
+                    a.className = 'sunnah-link';
+                    a.href = 'https://sunnah.com' + encodeURIComponent(query);
+                    a.target = '_blank';
+                    a.textContent = 'Open Sunnah.com Search ->';
+
+                    fallbackDiv.appendChild(p);
+                    fallbackDiv.appendChild(a);
+                    container.appendChild(fallbackDiv);
                     return;
                 }
 
-                container.innerHTML = '';
                 data.results.forEach(item => {
-                    container.innerHTML += `
-                        <div class="hadith-item">
-                            <div class="hadith-header">
-                                <span>${item.book} #${item.number}</span>
-                            </div>
-                            <p class="hadith-text">"${item.text}"</p>
-                            <a class="sunnah-link" href="${item.url}" target="_blank">Verify on a verified website &rarr;</a>
-                        </div>
-                    `;
+                    const card = document.createElement('div');
+                    card.className = 'hadith-item';
+
+                    const header = document.createElement('div');
+                    header.className = 'hadith-header';
+                    header.textContent = item.title;
+
+                    const text = document.createElement('p');
+                    text.className = 'hadith-text';
+                    text.textContent = item.snippet;
+
+                    const link = document.createElement('a');
+                    link.className = 'sunnah-link';
+                    link.href = item.url;
+                    link.target = '_blank';
+                    link.textContent = 'Read Full Hadith on Sunnah.com ->';
+
+                    card.appendChild(header);
+                    card.appendChild(text);
+                    card.appendChild(link);
+                    container.appendChild(card);
                 });
             } catch (err) {
-                container.innerHTML = '<div class="hadith-item"><p class="hadith-text" style="color:#ef4444;">Error connecting to Sahihfinders Go search engine.</p></div>';
+                container.innerHTML = '<div class="hadith-item"><p class="hadith-text" style="color:#ef4444;">Error connecting to the search engine.</p></div>';
             }
         }
     </script>
