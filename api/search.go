@@ -2,8 +2,10 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
+	"io"
 	"net/http"
+	"net/url"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -13,22 +15,13 @@ type SearchRequest struct {
 }
 
 type HadithMatch struct {
-	Book   string `json:"book"`
-	Number int    `json:"number"`
-	Text   string `json:"text"`
-	URL    string `json:"url"`
-	Score  int    `json:"-"`
+	Title   string `json:"title"`
+	Snippet string `json:"snippet"`
+	URL     string `json:"url"`
 }
 
 type SearchResponse struct {
 	Results []HadithMatch `json:"results"`
-}
-
-type HadithAPIResponse struct {
-	Hadiths []struct {
-		HadithNumber int    `json:"hadithnumber"`
-		Text         string `json:"text"`
-	} `json:"hadiths"`
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
@@ -43,82 +36,57 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	words := strings.Fields(strings.ToLower(req.Query))
-	var keywords []string
-	for _, word := range words {
-		clean := strings.Trim(word, ".,!?\"'")
-		if len(clean) > 2 {
-			keywords = append(keywords, clean)
-		}
-	}
+	searchQuery := "site:sunnah.com " + req.Query
+	ddgURL := "https://duckduckgo.com" + url.QueryEscape(searchQuery)
 
-	collections := []struct {
-		Name   string
-		Slug   string
-		APIURL string
-	}{
-		{"Sahih al-Bukhari", "bukhari", "https://jsdelivr.net"},
-		{"Sahih Muslim", "muslim", "https://jsdelivr.net"},
-	}
+	client := &http.Client{Timeout: 6 * time.Second}
+	httpReq, _ := http.NewRequest("GET", ddgURL, nil)
+	httpReq.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
 
-	var allMatches []HadithMatch
-	client := &http.Client{Timeout: 5 * time.Second}
+	resp, err := client.Do(httpReq)
+	var matches []HadithMatch
 
-	for _, col := range collections {
-		if len(allMatches) >= 10 {
-			break
-		}
-		resp, err := client.Get(col.APIURL)
-		if err != nil {
-			continue
-		}
-		var data HadithAPIResponse
-		if err := json.NewDecoder(resp.Body).Decode(&data); err == nil {
-			for _, h := range data.Hadiths {
-				if h.Text == "" {
-					continue
-				}
-				lowerText := strings.ToLower(h.Text)
-				score := 0
-				for _, kw := range keywords {
-					if strings.Contains(lowerText, kw) {
-						score++
-					}
-				}
-				if score > 0 {
-					if strings.Contains(lowerText, strings.ToLower(req.Query)) {
-						score += 5
-					}
-					allMatches = append(allMatches, HadithMatch{
-						Book:   col.Name,
-						Number: h.HadithNumber,
-						Text:   h.Text,
-						URL:    fmt.Sprintf("https://sunnah.com", col.Slug, h.HadithNumber),
-						Score:  score,
-					})
-				}
-			}
-		}
+	if err == nil && resp.StatusCode == 200 {
+		bodyBytes, _ := io.ReadAll(resp.Body)
 		resp.Body.Close()
-	}
+		htmlStr := string(bodyBytes)
 
-	for i := 0; i < len(allMatches); i++ {
-		for j := i + 1; j < len(allMatches); j++ {
-			if allMatches[j].Score > allMatches[i].Score {
-				allMatches[i], allMatches[j] = allMatches[j], allMatches[i]
+		linkRe := regexp.MustCompile(`class="result__a" href="([^"]+)"[^>]*>(.*?)</a>`)
+		snipRe := regexp.MustCompile(`class="result__snippet"[^>]*>(.*?)</a>`)
+		tagRe := regexp.MustCompile(`<[^>]*>`)
+
+		links := linkRe.FindAllStringSubmatch(htmlStr, 5)
+		snips := snipRe.FindAllStringSubmatch(htmlStr, 5)
+
+		for i := 0; i < len(links) && len(matches) < 2; i++ {
+			rawURL := links[i][1]
+			if strings.Contains(rawURL, "uddg=") {
+				if parsed, err := url.Parse(rawURL); err == nil {
+					if realURL := parsed.Query().Get("uddg"); realURL != "" {
+						rawURL = realURL
+					}
+				}
 			}
+
+			if !strings.Contains(rawURL, "sunnah.com") {
+				continue
+			}
+
+			cleanTitle := strings.TrimSpace(tagRe.ReplaceAllString(links[i][2], ""))
+			cleanSnip := ""
+			if i < len(snips) {
+				cleanSnip = strings.TrimSpace(tagRe.ReplaceAllString(snips[i][1], ""))
+			}
+
+			matches = append(matches, HadithMatch{
+				Title:   cleanTitle,
+				Snippet: cleanSnip,
+				URL:     rawURL,
+			})
 		}
 	}
-
-	limit := 2
-	if len(allMatches) < limit {
-		limit = len(allMatches)
-	}
-
-	topResults := allMatches[:limit]
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(SearchResponse{Results: topResults})
+	json.NewEncoder(w).Encode(SearchResponse{Results: matches})
 }
-
