@@ -21,13 +21,13 @@
     </header>
 
     <nav>
-        <a href="index.html">Home</a>
+        <a href="/">Home</a>
     </nav>
 
     <main>
         <div class="search-card">
-            <h2>Hadith Matcher</h2>
-            <p class="desc">Enter keywords or a phrase to pull the 2 closest matching Hadiths directly from Sunnah.com.</p>
+            <h2>Hadith searching tool</h2>
+            <p class="desc">Enter keywords or a phrase to pull the 2+ closest matching Hadiths directly from Sunnah.com.</p>
             
             <div class="input-group">
                 <input type="text" id="query-input" placeholder="Example: actions are by intentions" onkeypress="if(event.key==='Enter') searchHadith()" />
@@ -60,7 +60,7 @@
             const container = document.getElementById('results-container');
             if (!query) return;
 
-            container.innerHTML = '<p style="text-align:center; opacity:0.8;">Searching Sunnah.com...</p>';
+            container.innerHTML = '<p style="text-align:center; opacity:0.8;">Searching hadiths'...</p>';
 
             try {
                 const response = await fetch('/api/search', {
