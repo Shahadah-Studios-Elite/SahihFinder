@@ -69,6 +69,8 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	database := []HadithMatch{}
+
 	liveCollections := []struct {
 		Label  string
 		Slug   string
@@ -78,9 +80,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		{"40 Hadith Qudsi", "qudsi40", "https://jsdelivr.net"},
 	}
 
-	var matches []HadithMatch
-	client := &http.Client{Timeout: 4 * time.Second}
-
+	client := &http.Client{Timeout: 6 * time.Second}
 	for _, col := range liveCollections {
 		resp, err := client.Get(col.APIURL)
 		if err != nil || resp.StatusCode != 200 {
@@ -93,34 +93,59 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 				if h.Text == "" {
 					continue
 				}
-				lowerText := strings.ToLower(h.Text)
-				score := 0
-
-				if strings.Contains(lowerText, lowerQuery) {
-					score += 10
+				snippet := h.Text
+				if len(snippet) > 360 {
+					snippet = snippet[:360] + "..."
 				}
-
-				for _, kw := range keywords {
-					if strings.Contains(lowerText, kw) {
-						score += 2
-					}
-				}
-
-				if score > 0 {
-					snippet := h.Text
-					if len(snippet) > 360 {
-						snippet = snippet[:360] + "..."
-					}
-					matches = append(matches, HadithMatch{
-						Title:   fmt.Sprintf("%s #%d", col.Label, h.HadithNumber),
-						Snippet: snippet,
-						URL:     fmt.Sprintf("https://sunnah.com", col.Slug, h.HadithNumber),
-						Score:   score,
-					})
-				}
+				database = append(database, HadithMatch{
+					Title:   fmt.Sprintf("%s #%d", col.Label, h.HadithNumber),
+					Snippet: snippet,
+					URL:     fmt.Sprintf("https://sunnah.com", col.Slug, h.HadithNumber),
+				})
 			}
 		}
 		resp.Body.Close()
+	}
+
+	if len(database) == 0 {
+		database = []HadithMatch{
+			{
+				Title:   "Sahih al-Bukhari 1 - Actions are by Intentions",
+				Snippet: "I heard Allah's Messenger saying, 'The reward of deeds depends upon the intentions and every person will get the reward according to what he has intended.'",
+				URL:     "https://sunnah.com",
+			},
+			{
+				Title:   "Sahih al-Bukhari 8 - The Five Pillars of Islam",
+				Snippet: "Islam is based on five principles: To testify that none has the right to be worshipped but Allah and Muhammad is Allah's Messenger, to offer the compulsory prayers, to pay Zakat, to perform Hajj, and to observe fast during Ramadan.",
+				URL:     "https://sunnah.com",
+			},
+			{
+				Title:   "Sahih al-Bukhari 6018 - Speak Good or Remain Silent",
+				Snippet: "Whoever believes in Allah and the Last Day should talk what is good or keep quiet, and whoever believes in Allah and the Last Day should not hurt his neighbor, and whoever believes in Allah and the Last Day should entertain his guest generously.",
+				URL:     "https://sunnah.com",
+			},
+		}
+	}
+
+	matches := []HadithMatch{}
+	for _, entry := range database {
+		searchable := strings.ToLower(entry.Title + " " + entry.Snippet)
+		score := 0
+
+		if strings.Contains(searchable, lowerQuery) {
+			score += 10
+		}
+
+		for _, kw := range keywords {
+			if strings.Contains(searchable, kw) {
+				score += 2
+			}
+		}
+
+		if score > 0 {
+			entry.Score = score
+			matches = append(matches, entry)
+		}
 	}
 
 	for i := 0; i < len(matches); i++ {
