@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SahihFinder - Hijri Date Converter</title>
+    <link rel="stylesheet" href="calendar.css">
+<link rel="image/png" href="favicon1.png?v=6">
+</head>
+<body>
+
+    <header>
+        <div class="controls">
+            <button class="icon-button" onclick="toggleTheme()" id="theme-btn" title="Toggle Theme">
+                <svg id="theme-icon" viewBox="0 0 24 24">
+                    <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
+                </svg>
+            </button>
+        </div>
+        <h1>SahihFinder</h1>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a>
+    </nav>
+
+    <main>
+        <div class="calendar-card">
+            <h2>Gregorian to Hijri Converter</h2>
+            <p class="desc">Select any standard Gregorian date to convert it into the Islamic Hijri calendar using Go calculation.</p>
+            
+            <div class="input-group">
+                <input type="date" id="date-input" />
+                <button class="convert-btn" onclick="convertDate()">Convert</button>
+            </div>
+
+            <div class="result-box" id="result-box">
+                <p class="hijri-main" id="hijri-date"></p>
+                <p class="hijri-sub" id="gregorian-label"></p>
+            </div>
+
+            <p class="note-text">Note: Calculated via standard astronomical tabular algorithm. Local moon sighting may vary by 1 day.</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 SahihFinder - Shahadah Studios Elite</p>
+    </footer>
+
+    <script src="calendar.js"></script>
+</body>
+</html>
