@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SahihFinder - Tasbih Counter</title>
+    <link rel="stylesheet" href="tasbih.css">
+</head>
+<body>
+
+    <header>
+        <div class="controls">
+            <button class="icon-button" onclick="toggleTheme()" id="theme-btn" title="Toggle Theme">
+                <svg id="theme-icon" viewBox="0 0 24 24">
+                    <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
+                </svg>
+            </button>
+        </div>
+        <h1>SahihFinder</h1>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a>
+    </nav>
+
+    <main>
+        <div class="tasbih-card">
+            <div class="phrase-selector">
+                <button class="phrase-btn active" onclick="setPhrase('SubhanAllah', this)">Subhan-Allah</button>
+                <button class="phrase-btn" onclick="setPhrase('Alhamdulillah', this)">Alhamdulillah</button>
+                <button class="phrase-btn" onclick="setPhrase('Allahu Akbar', this)">Allahu Akbar</button>
+                <button class="phrase-btn" onclick="setPhrase('Astaghfirullah', this)">Astaghfirullah</button>
+            </div>
+
+            <div class="active-phrase" id="phrase-title">SubhanAllah</div>
+
+            <div class="counter-display">
+                <div class="count-number" id="count-value">0</div>
+                <p class="target-label" id="target-text">Target: 33 | Completed Rounds: 0</p>
+            </div>
+
+            <div class="target-row">
+                <button class="target-btn active" onclick="setTarget(33, this)">33</button>
+                <button class="target-btn" onclick="setTarget(99, this)">99</button>
+                <button class="target-btn" onclick="setTarget(100, this)">100</button>
+            </div>
+
+            <button class="tap-btn" onclick="incrementCount()">Count (+1)</button>
+
+            <div class="secondary-actions">
+                <button class="sub-btn" onclick="decrementCount()">Undo (-1)</button>
+                <button class="sub-btn" onclick="resetCount()">Reset</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 SahihFinder - Shahadah Studios Elite</p>
+    </footer>
+
+    <script src="tasbih.js"></script>
+</body>
+</html>
