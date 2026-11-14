@@ -10,7 +10,34 @@ function toggleTheme() {
     }
 }
 
-async function convertDate() {
+function gregorianToHijri(year, month, day) {
+    let y = year;
+    let m = month;
+    const d = day;
+
+    if (m < 3) {
+        y--;
+        m += 12;
+    }
+
+    const a = Math.floor(y / 100);
+    const b = 2 - a + Math.floor(a / 4);
+    const jd = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + b - 1524;
+
+    let l = jd - 1948440 + 10632;
+    const n = Math.floor((l - 1) / 10631);
+    l = l - 10631 * n + 354;
+    const j = Math.floor((10985 - l) / 5316) * Math.floor((50 * l) / 17719) + Math.floor(l / 5670) * Math.floor((43 * l) / 15238);
+    l = l - Math.floor((30 - j) / 15) * Math.floor((17719 * j) / 50) - Math.floor(j / 16) * Math.floor((15238 * j) / 43) + 29;
+
+    const hMonth = Math.floor((24 * l) / 709);
+    const hDay = l - Math.floor((709 * hMonth) / 24);
+    const hYear = 30 * n + j - 30;
+
+    return { hYear, hMonth, hDay };
+}
+
+function convertDate() {
     const dateInput = document.getElementById('date-input').value;
     const resultBox = document.getElementById('result-box');
     const hijriElem = document.getElementById('hijri-date');
@@ -18,24 +45,36 @@ async function convertDate() {
 
     if (!dateInput) return;
 
-    hijriElem.textContent = 'Calculating...';
-    gregElem.textContent = '';
+    const parts = dateInput.split('-').map(Number);
+    const year = parts;
+    const month = parts;
+    const day = parts;
+
+    const months = [
+        "",
+        "Muharram",
+        "Safar",
+        "Rabi' al-Awwal",
+        "Rabi' al-Thani",
+        "Jumada al-Awwal",
+        "Jumada al-Thani",
+        "Rajab",
+        "Sha'ban",
+        "Ramadan",
+        "Shawwal",
+        "Dhu al-Qi'dah",
+        "Dhu al-Hijjah"
+    ];
+
+    const gregMonths = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    const { hYear, hMonth, hDay } = gregorianToHijri(year, month, day);
+    hijriElem.textContent = `${hDay} ${months[hMonth]} ${hYear} AH`;
+    gregElem.textContent = `Gregorian: ${gregMonths[month - 1]} ${day}, ${year}`;
     resultBox.style.display = 'block';
-
-    try {
-        const response = await fetch('/api/hijri', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ date: dateInput })
-        });
-        const data = await response.json();
-
-        hijriElem.textContent = data.hijri;
-        gregElem.textContent = 'Gregorian: ' + data.gregorian;
-    } catch (err) {
-        hijriElem.textContent = 'Error connecting to Go backend.';
-        gregElem.textContent = 'internal Golang error';
-    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -46,3 +85,4 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('date-input').value = `${yyyy}-${mm}-${dd}`;
     convertDate();
 });
+
