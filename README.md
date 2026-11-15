@@ -1,8 +1,8 @@
-# SahihFinder
+# SahihFinder - Verify the truth
 
 SahihFinder is a web app that helps Muslims investigate Islamic claims and find hadith references. It brings together a hadith search tool, a text checker, curated resource links, and a tasbih counter.
 
-> **Important:** SahihFinder is an aid for further research, not a religious authority. The checker uses simple text-pattern rules, and the search tool searches a small built-in index. Neither can establish the authenticity or interpretation of a narration. Verify references with trusted primary sources and qualified scholars before sharing or acting on a claim.
+> **Important:** SahihFinder is an aid for further research... Just remember at the moment its not fully released to the world
 
 ## Features
 
