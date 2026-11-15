@@ -1,0 +1,234 @@
+/* TASBIH  */
+:root {
+    --bg-color: #f8fafc;
+    --text-color: #1e293b;
+    --card-bg: #ffffff;
+    --box-bg: #fafafa;
+    --border-color: #e2e8f0;
+    --primary-color: #054432;
+    --accent-color: #c28100;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="dark"] {
+    --bg-color: #0f172a;
+    --text-color: #f1f5f9;
+    --card-bg: #1e293b;
+    --box-bg: #0f172a;
+    --border-color: #334155;
+    --primary-color: #022c22;
+    --accent-color: #f6ad55;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    text-align: center;
+    user-select: none;
+}
+
+header {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    padding: 40px 20px;
+    position: relative;
+    border-bottom: 1px solid var(--border-color);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    font-weight: 700;
+}
+
+.controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.icon-button {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.icon-button svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+nav {
+    background-color: var(--primary-color);
+    padding: 12px 0;
+    border-top: 1px solid var(--border-color);
+}
+
+nav a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+nav a:hover {
+    color: #f6ad55;
+}
+
+main {
+    flex: 1;
+    max-width: 550px;
+    width: 100%;
+    margin: 40px auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.tasbih-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 35px 25px;
+    box-shadow: var(--shadow);
+}
+
+.phrase-selector {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.phrase-btn {
+    padding: 8px 14px;
+    background-color: var(--box-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.phrase-btn.active {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border-color: var(--primary-color);
+}
+
+.active-phrase {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    margin: 10px 0 25px 0;
+}
+
+.counter-display {
+    background-color: var(--box-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 25px 20px;
+    margin-bottom: 25px;
+}
+
+.count-number {
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1;
+    margin: 0 0 10px 0;
+}
+
+.target-label {
+    font-size: 0.95rem;
+    opacity: 0.8;
+    margin: 0;
+}
+
+.target-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.target-btn {
+    padding: 6px 14px;
+    background-color: var(--box-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.target-btn.active {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.tap-btn {
+    width: 100%;
+    padding: 22px;
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border: 1px solid var(--primary-color);
+    border-radius: 10px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 15px;
+    transition: transform 0.08s, opacity 0.2s;
+}
+
+.tap-btn:active {
+    transform: scale(0.97);
+}
+
+.secondary-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.sub-btn {
+    flex: 1;
+    padding: 12px;
+    background-color: var(--box-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.sub-btn:hover {
+    opacity: 0.85;
+}
+
+footer {
+    padding: 25px 20px;
+    font-size: 0.9rem;
+    color: #64748b;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--card-bg);
+}

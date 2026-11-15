@@ -1,0 +1,76 @@
+function toggleTheme() {
+    const body = document.body;
+    const icon = document.getElementById('theme-icon');
+    if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        icon.innerHTML = '<path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>';
+    } else {
+        body.setAttribute('data-theme', 'dark');
+        icon.innerHTML = '<path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.42l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.42L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.42l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.42l-1.06-1.06zm1.06-12.37c-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.42s1.03.39 1.41 0l1.06-1.06c.39-.38.39-1.02 0-1.42zM5.99 16.95l-1.06 1.06c-.39.39-.39 1.03 0 1.42s1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.42z"/>';
+    }
+}
+
+async function searchHadith() {
+    const query = document.getElementById('query-input').value.trim();
+    const container = document.getElementById('results-container');
+    if (!query) return;
+
+    container.innerHTML = '<p style="text-align:center; opacity:0.8;">Searching Sahih collections...</p>';
+
+    try {
+        const response = await fetch('/api/search', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: query })
+        });
+        const data = await response.json();
+
+        container.innerHTML = '';
+
+        if (!data.results || data.results.length === 0) {
+            const fallbackDiv = document.createElement('div');
+            fallbackDiv.className = 'hadith-item';
+
+            const p = document.createElement('p');
+            p.className = 'hadith-text';
+            p.textContent = 'No exact matches found in the quick index. Click below to search the full Sunnah.com archive:';
+
+            const a = document.createElement('a');
+            a.className = 'sunnah-link';
+            a.href = 'https://sunnah.com' + encodeURIComponent(query);
+            a.target = '_blank';
+            a.textContent = 'Search "' + query + '" on Sunnah.com ->';
+
+            fallbackDiv.appendChild(p);
+            fallbackDiv.appendChild(a);
+            container.appendChild(fallbackDiv);
+            return;
+        }
+
+        data.results.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'hadith-item';
+
+            const header = document.createElement('div');
+            header.className = 'hadith-header';
+            header.textContent = item.title;
+
+            const text = document.createElement('p');
+            text.className = 'hadith-text';
+            text.textContent = item.snippet;
+
+            const link = document.createElement('a');
+            link.className = 'sunnah-link';
+            link.href = item.url;
+            link.target = '_blank';
+            link.textContent = 'Verify on Sunnah.com ->';
+
+            card.appendChild(header);
+            card.appendChild(text);
+            card.appendChild(link);
+            container.appendChild(card);
+        });
+    } catch (err) {
+        container.innerHTML = '<div class="hadith-item"><p class="hadith-text" style="color:#ef4444;">Error connecting to the Go backend. </p></div>';
+    }
+}

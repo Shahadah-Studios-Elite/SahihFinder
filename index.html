@@ -3,184 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="icon" type="image/png" href="/favicon1.png?v=6">
     <title>SahihFinder - Verify the Truth</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#054432">
-    <style>
-        :root {
-            --bg-color: #f8fafc;
-            --text-color: #1e293b;
-            --card-bg: #ffffff;
-            --border-color: #e2e8f0;
-            --primary-color: #054432;
-            --accent-color: #c28100;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-        }
-        [data-theme="dark"] {
-            --bg-color: #0f172a;
-            --text-color: #f1f5f9;
-            --card-bg: #1e293b;
-            --border-color: #334155;
-            --primary-color: #022c22;
-            --accent-color: #f6ad55;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
-        }
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            transition: background-color 0.3s, color 0.3s;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        header {
-            background-color: var(--primary-color);
-            color: #ffffff;
-            padding: 60px 20px;
-            text-align: center;
-            position: relative;
-            border-bottom: 1px solid var(--border-color);
-        }
-        header h1 {
-            margin: 0;
-            font-size: 2.8rem;
-            font-weight: 700;
-            letter-spacing: -0.025em;
-        }
-        header p {
-            margin: 12px 0 0 0;
-            color: #f6ad55;
-            font-size: 1.2rem;
-            font-weight: 400;
-        }
-        .controls {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            gap: 12px;
-        }
-        .icon-button {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ffffff;
-            padding: 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s;
-        }
-        .icon-button:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        .icon-button svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
-        #pwa-btn {
-            display: none;
-        }
-        main {
-            flex: 1;
-            max-width: 800px;
-            width: 100%;
-            margin: 60px auto;
-            padding: 0 20px;
-            box-sizing: border-box;
-        }
-        .hero-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 40px;
-            text-align: center;
-            box-shadow: var(--shadow);
-        }
-        .hero-card h2 {
-            color: var(--accent-color);
-            margin-top: 0;
-            font-size: 2rem;
-            font-weight: 600;
-        }
-        .hero-card p {
-            font-size: 1.15rem;
-            line-height: 1.75;
-            color: var(--text-color);
-            opacity: 0.9;
-            margin-bottom: 35px;
-        }
-        .action-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 14px 32px;
-            background-color: var(--primary-color);
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            border-radius: 6px;
-            border: 1px solid var(--primary-color);
-            transition: background-color 0.2s, color 0.2s, transform 0.1s;
-            box-shadow: var(--shadow);
-        }
-        .action-button:hover {
-            background-color: transparent;
-            color: var(--text-color);
-        }
-        .action-button:active {
-            transform: scale(0.98);
-        }
-        footer {
-            padding: 30px 20px;
-            font-size: 0.9rem;
-            color: #64748b;
-            border-top: 1px solid var(--border-color);
-            text-align: center;
-            background-color: var(--card-bg);
-        }
-    </style>
+    <link rel="stylesheet" href="index.css">
+<link rel="icon" type="image/png" href="/favicon1.png?v=6">
 </head>
 <body>
 
-    <header>
-        <div class="controls">
-            <button class="icon-button" id="pwa-btn" title="Install App">
-                <svg viewBox="0 0 24 24">
-                    <path d="M5 20h14v-2H5v2zm7-18L5.33 11h4V16h5.34v-5h4L12 2z"/>
-                </svg>
-            </button>
-            <button class="icon-button" onclick="toggleTheme()" id="theme-btn" title="Toggle Theme">
-                <svg id="theme-icon" viewBox="0 0 24 24">
-                    <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
-                </svg>
-            </button>
-        </div>
-        <h1>SahihFinder</h1>
-        <p>A website for Muslims to verify the truth from the internet</p>
-    </header>
+    <nav class="sidebar">
+       
+        <a href="/Wiki" class="nav-item">
+            <span class="nav-emoji"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-library-big preview-icon"><rect width="8" height="18" x="3" y="3" rx="1"/><path d="M7 3v18"/><path d="M20.4 18.9c.2.5-.1 1.1-.6 1.3l-1.9.7c-.5.2-1.1-.1-1.3-.6L11.1 5.1c-.2-.5.1-1.1.6-1.3l1.9-.7c.5-.2 1.1.1 1.3.6Z"/></svg></span>
+            <span class="nav-label">Wiki</span>
+        </a>
+        <a href="/searcher" class="nav-item">
+            <span class="nav-emoji"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open-check preview-icon"><path d="M12 5v16"/><path d="m16 12 2 2 4-4"/><path d="M22 6V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2h4.001A2 2 0 0022 17v-1.344"/></svg></span>
+            <span class="nav-label">Searcher</span>
+        </a>
+        <a href="/checker" class="nav-item">
+            <span class="nav-emoji"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check preview-icon"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span>
+            <span class="nav-label">Checker</span>
+        </a>
+        <a href="/tasbih" class="nav-item">
+            <span class="nav-emoji"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-numbers preview-icon"><path d="m10 4 2.6-1.95a.25.25 0 01.4.2V10"/><path d="M16 14.535A4 4 0 0118 14a2 2 0 010 4 2 2 0 010 4 4 4 0 01-2-.535"/><path d="M8 22H4.5a.5.5 0 01-.5-.5c0-2.68 4-2.932 4-5.5a2 2 0 00-2-2 2.5 2.5 0 00-2 1"/></svg></span>
+            <span class="nav-label">Tasbih<br>counter</span>
+        </a>
+       
+    </nav>
 
-    <main>
-        <div class="hero-card">
-            <h2>Welcome to SahihFinder</h2>
-            <p>A dedicated platform built to help clarify and verify information online in accordance with Islamic values.</p>
-            <a href="Wiki" class="action-button">Explore The WiKi</a>
-            <br>
-            <br>
-            <a href="checker" class="action-button">Use the Hadith Verifier</a>
-        </div>
-    </main>
+    <div class="page-wrapper">
+        <header>
+            <div class="controls">
+                <button class="icon-button" id="pwa-btn" title="Install App">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M5 20h14v-2H5v2zm7-18L5.33 11h4V16h5.34v-5h4L12 2z"/>
+                    </svg>
+                </button>
+                <button class="icon-button" onclick="toggleTheme()" id="theme-btn" title="Toggle Theme">
+                    <svg id="theme-icon" viewBox="0 0 24 24">
+                        <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
+                    </svg>
+                </button>
+            </div>
+            <h1>SahihFinder</h1>
+            <p>A website for Muslims to verify the truth from the internet</p>
+        </header>
 
-    <footer>
-        <p>&copy; 2026 SahihFinder - Shahadah Studios Elite</p>
-    </footer>
+        <main>
+            <div class="hero-card">
+                <h2>Welcome to SahihFinder</h2>
+                <p>A dedicated platform built to help clarify and verify information online in accordance with Islamic values. Access curated resources, tools, and cross-referenced research tables to validate records safely.</p>
+                <a href="/Wiki" class="action-button">Explore The WIKI</a>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 SahihFinder - Shahadah Studios Elite</p>
+        </footer>
+    </div>
 
     <script>
         function toggleTheme() {
@@ -220,7 +101,3 @@
     </script>
 </body>
 </html>
-
-
-
-

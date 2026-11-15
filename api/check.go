@@ -31,7 +31,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	input := strings.ToLower(req.Text)
 	
 	status := "Needs Manual Check"
-	message := "This text cannot be automatically verified. Please cross-check this information manually on Sunnah.com or ask a trusted local scholar."
+	message := "This text cannot be automatically verified. Please cross-check this information manually on trusted website(s) or ask a trusted local scholar."
 
 	hasTrustedSource := strings.Contains(input, "bukhari") || 
 		strings.Contains(input, "muslim") || 
