@@ -38,13 +38,15 @@ function buildHadithLink() {
         return;
     }
 
+    const targetUrl = new URL(slug + ':' + num, 'https://sunnah.com');
+
     const title = document.createElement('p');
     title.className = 'result-title';
     title.textContent = bookName + ' #' + num;
 
     const link = document.createElement('a');
     link.className = 'sunnah-link';
-    link.href = 'https://sunnah.com' + slug + ':' + num;
+    link.href = targetUrl.href;
     link.target = '_blank';
     link.textContent = 'Open Verified Narration on Sunnah.com ->';
 
