@@ -99,7 +99,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		{
 			Title:   "Sahih al-Bukhari 1899 - Fasting is a Shield",
 			Snippet: "Fasting is a shield with which a servant protects himself from the Fire.",
-			URL:     "https://sunnah.com899",
+			URL:     "https://sunnah.com",
 		},
 		{
 			Title:   "Sahih al-Bukhari 3559 - Best in Manners and Character",
@@ -174,12 +174,17 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		{
 			Title:   "40 Hadith Qudsi 17 - Oppression is Forbidden",
 			Snippet: "O My servants, I have forbidden oppression for Myself and have made it forbidden amongst you, so do not oppress one another.",
-			URL:     "https://sunnah.com7",
+			URL:     "https://sunnah.com",
 		},
 		{
 			Title:   "40 Hadith Qudsi 25 - Reward for Good Intentions",
 			Snippet: "Allah has written down the good deeds and the bad ones. Whoever intended to perform a good deed, yet did not do it, then Allah writes it down with Himself as a complete good deed.",
 			URL:     "https://sunnah.com",
+		},
+	{
+			Title:   "Sahih Al Bukhari -  Food, meals",
+			Snippet: "We used to be happy on Fridays, for there was an old lady who used to pull out the roots of Silq and put it in a cooking pot with some barley. When we had finished the prayer, we would visit her and she would present that dish before us. So we used to be happy on Fridays because of that, and we never used to take our meals or have a mid-day nap except after the Friday prayer. By Allah, that meal contained no fat.",
+			URL:     "https://sunnah.com/bukhari:5403",
 		},
 	}
 
