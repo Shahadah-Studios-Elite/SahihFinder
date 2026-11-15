@@ -1,4 +1,4 @@
-//  Our JavaScript for Agent.html...
+// JAVASCRIPT!@
 function toggleTheme() {
     const body = document.body;
     const icon = document.getElementById('theme-icon');
@@ -30,6 +30,17 @@ function appendMessage(sender, text, type) {
     return msgDiv;
 }
 
+function getFallbackReply(userMsg) {
+    const lower = userMsg.toLowerCase();
+    if (lower.includes('salam') || lower.includes('hello') || lower.includes('hi')) {
+        return 'Wa Alaykum Assalam! How can I help you verify Islamic information or check trusted Sunni references today?';
+    }
+    if (lower.includes('hadith') || lower.includes('bukhari') || lower.includes('muslim')) {
+        return 'When verifying any Hadith, always check its exact wording and grading on Sunnah.com (such as Sahih al-Bukhari or Sahih Muslim) rather than relying on unverified social media posts.';
+    }
+    return 'Please wait 30 seconds between live AI questions, or use our Searcher and Wiki tools to check verified Sunni references directly on Sunnah.com.';
+}
+
 async function sendMessage() {
     const input = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
@@ -44,17 +55,37 @@ async function sendMessage() {
     const thinkingMsg = appendMessage('SahihAgent', 'Thinking...', 'agent');
 
     try {
-        const response = await fetch('/api/agent', {
+        const response = await fetch('https://pollinations.ai', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: message })
+            body: JSON.stringify({
+                messages: [
+                    {
+                        role: 'system',
+                        content: 'You are SahihAgent, a respectful, helpful Sunni Muslim AI assistant for SahihFinder. Keep answers clear, concise, and grounded in mainstream Sunni sources like the Quran, Sahih al-Bukhari, and Sahih Muslim. Always remind users to verify exact Hadith wording on Sunnah.com or with a trusted local scholar.'
+                    },
+                    {
+                        role: 'user',
+                        content: message
+                    }
+                ]
+            })
         });
-        const data = await response.json();
+
         thinkingMsg.remove();
-        appendMessage('SahihAgent', data.reply, 'agent');
+
+        if (response.status === 402 || !response.ok) {
+            appendMessage('SahihAgent', getFallbackReply(message), 'agent');
+        } else {
+            const data = await response.json();
+            const replyText = data && data.choices && data.choices.message
+                ? data.choices.message.content.trim()
+                : getFallbackReply(message);
+            appendMessage('SahihAgent', replyText, 'agent');
+        }
     } catch (err) {
         thinkingMsg.remove();
-        appendMessage('SahihAgent', 'Connection issue with the Go server. Please try again.', 'agent');
+        appendMessage('SahihAgent', getFallbackReply(message), 'agent');
     } finally {
         input.disabled = false;
         sendBtn.disabled = false;
