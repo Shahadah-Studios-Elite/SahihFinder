@@ -74,6 +74,21 @@ header h1 {
     height: 20px;
     fill: currentColor;
 }
+nav {
+    background-color: var(--primary-color);
+    padding: 12px 0;
+    border-top: 1px solid var(--border-color);
+}
+
+nav a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+nav a:hover {
+    color: #f6ad55;
+}
 
 main {
     flex: 1;
