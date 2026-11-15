@@ -1,73 +1,79 @@
 # SahihFinder
 
-SahihFinder is a web-based platform designed to help Muslims verify the truth of information shared online by highlighting potentially unreliable claims and checking whether a text references trusted Islamic sources.
+SahihFinder is a web app that helps Muslims investigate Islamic claims and find hadith references. It brings together a hadith search tool, a text checker, curated resource links, and a tasbih counter.
 
-The project combines a lightweight static front end with a small Go-based verification API to provide a simple, accessible way to assess online content.
+> **Important:** SahihFinder is an aid for further research, not a religious authority. The checker uses simple text-pattern rules, and the search tool searches a small built-in index. Neither can establish the authenticity or interpretation of a narration. Verify references with trusted primary sources and qualified scholars before sharing or acting on a claim.
 
-## Overview
+## Features
 
-SahihFinder was created for the purpose of:
+- **Hadith Searcher** — search a small curated set of sample narrations and view source links.
+- **Text Checker** — flag certain chain-letter phrases and claims that mention the Prophet or a similar authority without naming a recognized collection. It can also identify when a collection name is present; that does not verify the narration.
+- **Wiki / resources** — browse links to Islamic reference sites and a Madhab section.
+- **Tasbih counter** — count selected dhikr phrases, choose a target, undo, and reset.
+- **Responsive pages and theme toggle** — a lightweight HTML, CSS, and JavaScript frontend with light/dark theme controls.
+- **Installable web app support** — web app manifest, service worker, and an install prompt where supported.
 
-- helping users evaluate suspicious or viral messages
-- identifying claims that resemble chain-letter or rumor-style content
-- checking whether a statement references a recognized hadith collection
-- encouraging careful verification before sharing or acting on information
+## Technology
 
-## Key Features
+- HTML and CSS
+- JavaScript, with a small TypeScript entry file
+- Go 1.21 HTTP handlers for checker and search endpoints
+- Vercel configuration for clean URLs and serverless API routes
 
-- Clean and responsive landing page
-- Dark/light theme toggle
-- PWA-style install support via service worker and manifest
-- Hadith verification interface
-- Wiki-style information page
-- Lightweight Go backend for claim assessment
-- Islamic-source awareness, including references to classical hadith collections
+## Project layout
 
-## Tech Stack
+| Path | Purpose |
+| --- | --- |
+| `index.html`, `index.css` | Home page and its styles |
+| `checker.html` | Text-checking interface; sends requests to `/api/check` |
+| `searcher.html`, `searcher.js`, `search.css` | Hadith search interface |
+| `tasbih.html`, `tasbih.js`, `tasbih.css` | Tasbih counter |
+| `Wiki.html` | Resource and Madhab information page |
+| `chatbot.html` | Chatbot page |
+| `api/check.go` | Text-checking API handler |
+| `api/search.go` | Search API handler and built-in sample index |
+| `manifest.json`, `sw.js` | PWA metadata and service worker |
+| `vercel.json` | Vercel clean-URL configuration |
+| `go.mod`, `package.json` | Go module and frontend package metadata |
 
-### Frontend
-- HTML
-- CSS
-- JavaScript
-- Progressive Web App (PWA) support via manifest.json and sw.js
+## API overview
 
-### Backend
-- Go
-- HTTP handlers for verification logic
+### `POST /api/check`
 
-### Deployment / Hosting
-- Vercel configuration included
-- Static website structure suitable for simple hosting environments
+Request JSON:
 
-## Project Structure
+```json
+{
+  "text": "Text to check"
+}
+```
 
-- index.html — main landing page
-- checker.html — verification interface
-- Wiki.html — informational content page
-- chatbot.html — chatbot-focused experience
-- api/check.go — Go handler used to evaluate submitted text
-- manifest.json — PWA metadata
-- sw.js — service worker
-- package.json — frontend package metadata
-- go.mod — Go module definition
+Returns a JSON object with a `status` and explanatory `message`. The result is a pattern-based prompt for manual checking, not an authenticity verdict.
 
-## Useful Information
+### `POST /api/search`
 
-- The site is designed as a public-facing verification tool rather than a general-purpose content platform.
-- Verification logic focuses on identifying warning patterns, such as chain-letter wording and statements attributed to the Prophet without trusted references.
-- The project intentionally encourages cross-checking with authoritative Islamic sources and scholars.
-- The repository is a front-end-first project with a very lightweight backend, making it easy to maintain and extend.
+Request JSON:
+
+```json
+{
+  "query": "actions are by intentions"
+}
+```
+
+Returns a `results` array containing matching entries from the handler's built-in sample index. Results should be checked against the linked primary source.
+
+Both endpoints accept `POST` requests with JSON bodies. The handlers reject other HTTP methods and malformed requests.
+
+## Development and deployment
+
+The repository includes Vercel configuration and Go API handlers intended for deployment as Vercel serverless functions. Deploy the repository to Vercel to use the `/api/check` and `/api/search` endpoints with the static pages.
+
+`package.json` currently defines package metadata only; it does not provide npm scripts or dependencies. The repository does not currently document a separate local development server command.
 
 ## Credits
 
-SahihFinder is developed and maintained by Shahadah Studios Elite.
-
-This project reflects a vision of combining digital tools with Islamic values, helping users think critically and verify information before sharing it.
-
-## Notes
-
-This project is intended to support informed, responsible engagement with online content and should be used alongside sound scholarship, trusted references, and careful personal judgment.
+Developed and maintained by Shahadah Studios Elite.
 
 ---
 
-SahihFinder — Verify the Truth.
+**SahihFinder — Verify the Truth.**
