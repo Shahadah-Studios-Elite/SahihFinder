@@ -1,3 +1,4 @@
+// took a while to debug...
 function toggleTheme() {
     const body = document.body;
     const icon = document.getElementById('theme-icon');
@@ -38,7 +39,7 @@ function buildHadithLink() {
         return;
     }
 
-    const targetUrl = new URL(slug + ':' + num, 'https://sunnah.com');
+    const targetUrl = new URL('/' + slug + ':' + num, 'https://sunnah.com');
 
     const title = document.createElement('p');
     title.className = 'result-title';
@@ -53,4 +54,3 @@ function buildHadithLink() {
     panel.appendChild(title);
     panel.appendChild(link);
 }
-
