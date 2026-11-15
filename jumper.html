@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SahihFinder - Direct Hadith Jumper</title>
+    <link rel="stylesheet" href="jumper.css">
+</head>
+<body>
+
+    <header>
+        <div class="controls">
+            <button class="icon-button" onclick="toggleTheme()" id="theme-btn" title="Toggle Theme">
+                <svg id="theme-icon" viewBox="0 0 24 24">
+                    <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
+                </svg>
+            </button>
+        </div>
+        <h1>SahihFinder</h1>
+    </header>
+
+    <main>
+        <div class="jumper-card">
+            <h2>Direct Hadith Jumper</h2>
+            <p class="desc">Choose a classical Sunni collection and enter a Hadith number to verify the exact narration directly on Sunnah.com.</p>
+
+            <div class="form-stack">
+                <label for="book-select">Hadith Collection</label>
+                <select id="book-select">
+                    <option value="bukhari" data-max="7563" data-name="Sahih al-Bukhari">Sahih al-Bukhari (1 - 7563)</option>
+                    <option value="muslim" data-max="7563" data-name="Sahih Muslim">Sahih Muslim (1 - 7563)</option>
+                    <option value="tirmidhi" data-max="3956" data-name="Jami` at-Tirmidhi">Jami` at-Tirmidhi (1 - 3956)</option>
+                    <option value="abudawud" data-max="5274" data-name="Sunan Abi Dawud">Sunan Abi Dawud (1 - 5274)</option>
+                    <option value="nasai" data-max="5758" data-name="Sunan an-Nasa'i">Sunan an-Nasa'i (1 - 5758)</option>
+                    <option value="ibnmajah" data-max="4341" data-name="Sunan Ibn Majah">Sunan Ibn Majah (1 - 4341)</option>
+                    <option value="nawawi40" data-max="42" data-name="An-Nawawi's 40 Hadith">An-Nawawi's 40 Hadith (1 - 42)</option>
+                    <option value="qudsi40" data-max="40" data-name="40 Hadith Qudsi">40 Hadith Qudsi (1 - 40)</option>
+                </select>
+
+                <label for="hadith-num">Hadith Number</label>
+                <input type="number" id="hadith-num" min="1" placeholder="Example: 1" onkeypress="if(event.key==='Enter') buildHadithLink()" />
+            </div>
+
+            <button class="jump-btn" onclick="buildHadithLink()">Find Direct Reference</button>
+
+            <div class="result-panel" id="result-panel"></div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 SahihFinder - Shahadah Studios Elite</p>
+    </footer>
+
+    <script src="jumper.js"></script>
+</body>
+</html>
+
