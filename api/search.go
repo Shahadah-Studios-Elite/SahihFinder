@@ -64,27 +64,27 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		{
 			Title:   "Sahih al-Bukhari 1 - Actions are by Intentions",
 			Snippet: "I heard Allah's Messenger saying, 'The reward of deeds depends upon the intentions and every person will get the reward according to what he has intended.'",
-			URL:     "https://sunnah.com",
+			URL:     "https://sunnah.com/bukhari:1",
 		},
 		{
 			Title:   "Sahih Muslim 1907 - Deeds are Judged by Motives",
 			Snippet: "Actions are judged by motives (niyyah), so each man will have what he intended.",
-			URL:     "https://sunnah.com",
+			URL:     "https://sunnah.com/bukhari:1907",
 		},
 		{
 			Title:   "Sahih al-Bukhari 8 - The Five Pillars of Islam",
 			Snippet: "Islam is based on five principles: To testify that none has the right to be worshipped but Allah and Muhammad is Allah's Messenger, to offer the compulsory prayers, to pay Zakat, to perform Hajj, and to observe fast during Ramadan.",
-			URL:     "https://sunnah.com",
+			URL:     "https://sunnah.com/bukhari:8",
 		},
 		{
 			Title:   "Sahih al-Bukhari 10 - Safety from Tongue and Hands",
 			Snippet: "A Muslim is the one who avoids harming Muslims with his tongue and hands.",
-			URL:     "https://sunnah.com0",
+			URL:     "https://sunnah.com/bukhari:10",
 		},
 		{
 			Title:   "Sahih al-Bukhari 13 - Loving for Your Brother",
 			Snippet: "None of you will have faith till he wishes for his Muslim brother what he likes for himself.",
-			URL:     "https://sunnah.com3",
+			URL:     "https://sunnah.com/bukhari:13",
 		},
 		{
 			Title:   "Sahih al-Bukhari 69 - Make Things Easy",
