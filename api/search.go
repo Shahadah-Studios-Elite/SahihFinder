@@ -89,37 +89,37 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		{
 			Title:   "Sahih al-Bukhari 69 - Make Things Easy",
 			Snippet: "Facilitate things to people concerning religious matters, and do not make it hard for them and give them good tidings and do not make them run away.",
-			URL:     "https://sunnah.com",
+			URL:     "https://sunnah.com/bukhari:69",
 		},
 		{
 			Title:   "Sahih al-Bukhari 528 - The Five Daily Prayers",
 			Snippet: "If there was a river at the door of anyone of you and he took a bath in it five times a day, would you notice any dirt on him? That is the example of the five prayers with which Allah blots out evil deeds.",
-			URL:     "https://sunnah.com",
+			URL:     "https://sunnah.com/bukhari:528",
 		},
 		{
 			Title:   "Sahih al-Bukhari 1899 - Fasting is a Shield",
 			Snippet: "Fasting is a shield with which a servant protects himself from the Fire.",
-			URL:     "https://sunnah.com",
+			URL:     "https://sunnah.com/bukhari:1899",
 		},
 		{
 			Title:   "Sahih al-Bukhari 3559 - Best in Manners and Character",
 			Snippet: "The best among you are those who have the best manners and character.",
-			URL:     "https://sunnah.com",
+			URL:     "https://sunnah.com/bukhari:3559",
 		},
 		{
 			Title:   "Sahih al-Bukhari 5027 - Learning and Teaching the Quran",
 			Snippet: "The best among you are those who learn the Qur'an and teach it.",
-			URL:     "https://sunnah.com",
+			URL:     "https://sunnah.com/bukhari:5027",
 		},
 		{
 			Title:   "Sahih al-Bukhari 5971 - Good Treatment of Parents",
 			Snippet: "A man asked, 'O Allah's Messenger! Who is more entitled to be treated with the best companionship by me?' The Prophet said, 'Your mother.' (Three times, then 'Your father.')",
-			URL:     "https://sunnah.com",
+			URL:     "https://sunnah.com/bukhari:5971",
 		},
 		{
 			Title:   "Sahih al-Bukhari 6018 - Speak Good or Remain Silent",
 			Snippet: "Whoever believes in Allah and the Last Day should talk what is good or keep quiet, and whoever believes in Allah and the Last Day should not hurt his neighbor, and whoever believes in Allah and the Last Day should entertain his guest generously.",
-			URL:     "https://sunnah.com",
+			URL:     "https://sunnah.com/bukhari:6018",
 		},
 		{
 			Title:   "Sahih al-Bukhari 6094 - Truthfulness Leads to Righteousness",
