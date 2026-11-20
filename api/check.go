@@ -54,7 +54,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		message = "Warning: An unverified transmission or command statement was detected without referencing a reliable collection (like Bukhari or Muslim). Please check this claim carefully."
 	} else if hasTrustedSource {
 		status = "Source Referenced"
-		message = "A classical Sunni Hadith collection is referenced in the text. Make sure to double-check the specific chapter and volume number to confirm accuracy."
+		message = "A classical Hadith collection is referenced in the text. Make sure to double-check the specific chapter and volume number to confirm accuracy."
 	}
 
 	res := ResponseData{
